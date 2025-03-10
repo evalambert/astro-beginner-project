@@ -1,0 +1,93 @@
+---
+// 📂 src/layouts/Main.astro
+import NavigationBar from "../components/NavigationBar.astro";
+import Footer from "../components/Footer.astro";
+
+import "../styles/global.css";
+
+type Props = {
+  title: string;
+};
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    {/* Add a new meta description tag */}
+    <meta name="description" content="Frau Katarina's website" />
+    <title>{title}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- 👀 add is:inline -->
+    <script is:inline>
+      /** Représente la clé de propriété du local storage via une variable */
+      const COLOUR_MODE = "COLOUR_MODE";
+
+      /** Représente les valeurs possibles du mode de couleur dans le local storage */
+      const LIGHT_THEME = "LIGHT";
+      const DARK_THEME = "DARK";
+
+      /** Représente la classe CSS utilisée pour activer le mode sombre */
+      const DARK_THEME_CLASS = "dark";
+
+      /** Sélectionne l'élément racine du document, ici <html> */
+      const rootEl = document.documentElement;
+
+      const getInitialColourMode = () => {
+        /** Récupère le mode de couleur sauvegardé dans le local storage */
+        const previouslySavedColourMode =
+          window.localStorage.getItem(COLOUR_MODE);
+
+        if (previouslySavedColourMode) {
+          return previouslySavedColourMode;
+        }
+
+        /** Vérifie si l'utilisateur a une préférence pour le mode sombre, * par exemple via les paramètres de son système d'exploitation ou de son navigateur */
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return DARK_THEME;
+        }
+
+        /** Définit le mode clair par défaut si aucune préférence n'est trouvée */
+        return LIGHT_THEME;
+      };
+
+      /** Récupère le mode de couleur initial */
+      const initialColourMode = getInitialColourMode();
+
+      const setInitialColourMode = (mode) => {
+        /** Applique le mode sélectionné en ajoutant ou supprimant la classe CSS "dark" */
+        if (mode === LIGHT_THEME) {
+          rootEl.classList.remove(DARK_THEME_CLASS);
+        } else {
+          rootEl.classList.add(DARK_THEME_CLASS);
+        }
+      };
+
+      /** Applique immédiatement le mode de couleur dès l'exécution du script */
+      setInitialColourMode(initialColourMode);
+    </script>
+  </head>
+
+  <body>
+    <main>
+      <NavigationBar />
+
+      <slot />
+
+      <Footer />
+    </main>
+  </body>
+</html>
